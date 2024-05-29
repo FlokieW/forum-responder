@@ -74,6 +74,13 @@ class MyClient(discord.Client):
 
         self.thread_creators[thread.id] = messages[0].author.id
         initial_post = f"Thread title: {thread.name}\n\n{messages[0].content}"
+        
+        # Check if there's no content but there are attachments
+        if not messages[0].content and messages[0].attachments:
+            initial_post += "\nAttachments: "
+            for attachment in messages[0].attachments:
+                initial_post += f"\n{attachment.url}"
+
 
         async with thread.typing():
             response = openai_client.chat.completions.create(
