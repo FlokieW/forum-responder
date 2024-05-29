@@ -114,8 +114,12 @@ VAN9006: "You are currently running an older version of Windows that will no lon
 
         chatgpt_response = response.choices[0].message.content
 
+        # Split the response into chunks of 2000 characters
+        response_chunks = [chatgpt_response[i:i+2000] for i in range(0, len(chatgpt_response), 2000)]
+
         # Reply in the thread
-        await messages[0].reply(chatgpt_response)
+        for chunk in response_chunks:
+            await messages[0].reply(chunk)
 
 discord_client = MyClient(intents=intents)
 
