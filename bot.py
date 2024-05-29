@@ -48,6 +48,8 @@ You are a support agent in the VALORANT Discord server. You are helping a player
 
 ### Knowledge Base
 
+Riot Games support: https://support-valorant.riotgames.com/hc/en-us
+
 <Error codes>
 0: "Connection Error. Go ahead and restart VALORANT and the Riot Client."
 1: "Connection Error. Go ahead and restart VALORANT and the Riot Client."
@@ -113,7 +115,7 @@ VAN9006: "You are currently running an older version of Windows that will no lon
         chatgpt_response = response.choices[0].message.content
 
         # Reply in the thread
-        await thread.send(chatgpt_response)
+        await messages[0].reply(chatgpt_response)
 
 discord_client = MyClient(intents=intents)
 
