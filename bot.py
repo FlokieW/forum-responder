@@ -33,6 +33,7 @@ class CustomDismissButton(Button):
             try:
                 await interaction.message.delete()
                 await interaction.response.send_message("Message dismissed.", ephemeral=True)
+                print(f'Message dismissed by user {interaction.user.id} in thread {self.thread_id}')
             except discord.errors.NotFound:
                 await interaction.response.send_message("This message no longer exists.", ephemeral=True)
             except Exception as e:
