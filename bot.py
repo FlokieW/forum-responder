@@ -24,7 +24,7 @@ class MyClient(discord.Client):
 
     async def on_thread_create(self, thread):
         # Ensure this is in the specific forum channel ID and not a typical thread
-        forum_channel_id = 1245267823132151899  # Replace with your forum channel ID
+        forum_channel_id = int(os.getenv('FORUM_CHANNEL_ID'))
         if isinstance(thread.parent, discord.ForumChannel) and thread.parent.id == forum_channel_id:
             print(f'Thread created: {thread.name} in forum {thread.parent.name}')
             await self.handle_thread_creation(thread)
