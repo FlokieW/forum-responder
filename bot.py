@@ -11,6 +11,7 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 DISMISS_ROLES = [int(role_id) for role_id in os.getenv('DISMISS_ROLES', '').split(',') if role_id]
+LOG_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID'))
 
 openai_client = OpenAI(api_key=OPENAI_API_KEY)
 
@@ -31,9 +32,17 @@ class CustomDismissButton(Button):
         # Ensure only the thread creator or a user with a dismiss role can dismiss
         if interaction.user.id == self.client.thread_creators.get(self.thread_id) or can_dismiss:
             try:
+                dismissed_message_content = interaction.message.content
                 await interaction.message.delete()
                 await interaction.response.send_message("Message dismissed.", ephemeral=True)
-                print(f'Message dismissed by user {interaction.user.id} in thread {self.thread_id}')
+                log_channel = self.client.get_channel(LOG_CHANNEL_ID)
+                await log_channel.send(f"""
+### <:util_Cross_Box:1180190758075125940> Message dismissed
+> **User:** `{interaction.user.id}`
+> **Thread:** `{self.thread_id}`
+> **Dismissed message:**
+```{dismissed_message_content}```
+                """)
             except discord.errors.NotFound:
                 await interaction.response.send_message("This message no longer exists.", ephemeral=True)
             except Exception as e:
