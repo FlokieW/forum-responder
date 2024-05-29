@@ -54,7 +54,7 @@ Riot Games support: https://support-valorant.riotgames.com/hc/en-us
 0: "Connection Error. Go ahead and restart VALORANT and the Riot Client."
 1: "Connection Error. Go ahead and restart VALORANT and the Riot Client."
 4: "Your display name is invalid. Something's up with your Riot ID. You can change it here."
-5: "Account was logged into elsewhere. You should log out from all devices."
+5: "Vanguard didn't start properly or isn't working properly. Go ahead and restart VALORANT and the Riot Client. If the problem persists, uninstall Riot Vanguard, then restart VALORANT."
 7: "Couldn't connect to session service. You might have a suspension on your account. Please check your email for more information. It could also be a platform issue. Be sure to check the VALORANT Discord or Support Site banner for more information."
 8 - 21: "Problems with the Riot Client. Go ahead and restart the Riot Client."
 29: "This is a network issue. Please make sure your firewall allows VALORANT through. Further details can be found here."
