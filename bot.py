@@ -80,33 +80,30 @@ class MyClient(discord.Client):
             await self.handle_thread_creation(thread)
 
     async def handle_thread_creation(self, thread):
+
         # Add a delay before processing the thread
         await asyncio.sleep(1)
-    
+
         # Get the initial post that created the thread
         messages = [message async for message in thread.history(limit=1)]
         if not messages:
             return
-    
+
         self.thread_creators[thread.id] = messages[0].author.id
-        initial_post_content = messages[0].content if messages[0].content else "No text content provided."
-        initial_post = f"Thread title: {thread.name}\n\n{initial_post_content}"
-    
+        initial_post = f"Thread title: {thread.name}\n\n{messages[0].content}"
+
         # Check if there are any attachments in the message
-        attachment_urls = []
-        for attachment in messages[0].attachments:
-            if attachment.url.lower().endswith(('.png', '.jpg', '.jpeg', '.gif')):
-                attachment_urls.append({
+        attachment_urls = [attachment.url for attachment in messages[0].attachments]
+
+        async with thread.typing():
+            user_content = [
+                {"type": "text", "text": f"{initial_post}"}
+            ]
+            for attachment_url in attachment_urls:
+                user_content.append({
                     "type": "image_url",
                     "image_url": {
-                        "url": f"{attachment.url}",
-                    },
-                })
-            elif attachment.url.lower().endswith(('.mp4', '.mov', '.avi', '.flv', '.wmv')):
-                attachment_urls.append({
-                    "type": "video_url",
-                    "video_url": {
-                        "url": f"{attachment.url}",
+                        "url": f"{attachment_url}",
                     },
                 })
             response = openai_client.chat.completions.create(
@@ -115,8 +112,7 @@ class MyClient(discord.Client):
                     {
                         "role": "system",
                         "content": [
-                            {"type": "text", "text": """
-You are a support agent in the VALORANT Discord server. You are helping a player who has created a thread in a forum channel. You cannot have a conversation with the player and can only send one message so do not ask for more information. Do you best to resolve the players' issue or answer their question. Answer in a natural, human-like manner but try to keep your answers concise and within 200 words. You do not need to greet the user. Always add the following message at the end of your response: '>>> I am an AI and I can make mistakes, please verify my answer. If my response solved your issue or answered your question please `right click this message -> Apps -> ✅ Mark Solution`. Thank you!'
+                            {"type": "text", "text": """You are a support agent in the VALORANT Discord server. You are helping a player who has created a thread in a forum channel. You cannot have a conversation with the player and can only send one message so do not ask for more information. Do you best to resolve the players' issue or answer their question. Answer in a natural, human-like manner but try to keep your answers concise and within 200 words. You do not need to greet the user. Always add the following message at the end of your response: '>>> I am an AI and I can make mistakes, please verify my answer. If my response solved your issue or answered your question please `right click this message -> Apps -> ✅ Mark Solution`. Thank you!'
 
 ### Knowledge Base
 
@@ -140,7 +136,7 @@ Bullet tracer: "There currently is a bug with the bullet tracer which allows you
                     },
                     {
                         "role": "user",
-                        "content": initial_post,
+                        "content": user_content,
                     }
                 ],
                 max_tokens=2000,
